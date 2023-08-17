@@ -6,4 +6,4 @@ struct sockaddr_in: This is a data structure used to represent socket addresses 
 
 sa_family: specifies the address family, which would be AF_INET for IPv4.
 sin_port : is the port number in network byte order (big-endian).
-sin_addr : is a structure containing the IP address
+sin_addr : is a structure containing the IP address.
