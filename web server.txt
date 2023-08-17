@@ -1,0 +1,5 @@
+Objective of web server : 
+          
+       1. serves web content
+       2.uses the http protocol
+       3.
