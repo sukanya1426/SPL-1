@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 
     close(newsockfd);
     close(sockfd);
-    //suks
+    
 
     return 0;
 }
