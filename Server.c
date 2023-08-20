@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
 
     close(newsockfd);
     close(sockfd);
+    //suk
 
     return 0;
 }
