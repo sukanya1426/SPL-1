@@ -50,16 +50,16 @@ int main(int argc, char *argv[]) {
     f=fopen("file.txt","r");
     while((c=getc(f))!=EOF)
     {
-        fscanf(f,"%s",buffer);   
-        if(isspace(c)||c=='\t')
+        fscanf(f,"%s",buffer);   //traverse the file word by word
+        if(isspace(c)||c=='\t')  //blank space or tab thakle amra increment korbo
         words++;
 
     }
-    write(sockfd,&words,sizeof(int));
-    rewind(f);
+    write(sockfd,&words,sizeof(int)); //word count
+    rewind(f);  // file pointer 
 
     char ch;
-    while(ch!=EOF)
+    while(ch!=EOF)     // writing down to the server word by word
     {
          fscanf(f,"%s",buffer);
          write(sockfd,buffer,255);
