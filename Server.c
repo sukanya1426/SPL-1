@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
     int words;
     read(newsockfd,&words,sizeof(int));
 
-    while(ch!= words)
+    while(ch!= words)  //words number of time
     {
-        read(newsockfd,buffer,255);
+        read(newsockfd,buffer,255); //here we will get the words
         fprintf(fp,"%s ",buffer);
         ch++;
     }
