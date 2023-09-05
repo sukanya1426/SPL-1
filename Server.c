@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include<winsock2.h>
-#include<ws2spi.h>
-#include<ws2tcpip.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
 
 void error(const char *msg) {
     perror(msg);
@@ -49,28 +48,24 @@ int main(int argc, char *argv[]) {
     if (newsockfd < 0)
         error("error on Accept");
 
-    while (1) {
-        bzero(buffer, 255);
-        n = read(newsockfd, buffer, 255);
+    FILE *fp;
+    int ch = 0;
+    fp=fopen("file_received.txt","a");
+    int words;
+    read(newsockfd,&words,sizeof(int));
 
-        if (n < 0)
-            error("Error on reading.");
-
-        printf("client: %s\n", buffer);
-        bzero(buffer, 255);
-        fgets(buffer, 255, stdin);
-
-        n = write(newsockfd, buffer, strlen(buffer));
-        if (n < 0)
-            error("Error on writing.");
-
-        int i = strncmp("Bye", buffer, 3);
-        if (i == 0)
-            break;
+    while(ch!= words)  //words number of time
+    {
+        read(newsockfd,buffer,255); //here we will get the words
+        fprintf(fp,"%s ",buffer);
+        ch++;
     }
+
+    printf(" the file has been received successfully .it is saved by name file_received.txt");
 
     close(newsockfd);
     close(sockfd);
+    
 
     return 0;
 }
