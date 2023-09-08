@@ -1,9 +1,0 @@
-PF_INET: This stands for Protocol Family for Internet. It's a constant representing the address family for IPv4 (Internet Protocol version 4) sockets. It's used when creating sockets for IP networking.
-
-SOCK_STREAM: This is a socket type that provides a reliable, stream-oriented connection, using the TCP (Transmission Control Protocol). It ensures that data sent over the socket arrives in the same order and without errors. It is commonly used for applications that require a reliable and ordered data transfer, such as web browsers, email clients, and file transfer programs.
-
-struct sockaddr_in: This is a data structure used to represent socket addresses for IPv4 connections. It includes fields for the IP address and port number. Here's a simplified version of the structure
-
-sa_family: specifies the address family, which would be AF_INET for IPv4.
-sin_port : is the port number in network byte order (big-endian).
-sin_addr : is a structure containing the IP address.
