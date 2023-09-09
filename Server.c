@@ -6,6 +6,7 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 
+
 void error(const char *msg) {
     perror(msg);
     exit(1);
@@ -19,6 +20,7 @@ int main(int argc, char *argv[]) {
     int n;
 
     if (argc < 2) {
+
         fprintf(stderr, "error, no port provided\n");
         exit(1);
     }
@@ -26,6 +28,7 @@ int main(int argc, char *argv[]) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (sockfd < 0) {
+        
         error("ERROR opening socket");
     }
 
@@ -47,6 +50,11 @@ int main(int argc, char *argv[]) {
 
     if (newsockfd < 0)
         error("error on Accept");
+
+    
+
+
+
 
     FILE *fp;
     int ch = 0;
