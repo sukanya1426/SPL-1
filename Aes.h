@@ -1,4 +1,6 @@
 #include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 
 unsigned char s_box[256] =  
      {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
@@ -76,7 +78,7 @@ unsigned char rcon[256]=
    0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 
    0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
    
-   }
+   };
 
 void keyExpansionCore(unsigned char* in,unsigned char i){
     //rotate left
@@ -213,7 +215,17 @@ void aes_encrypt(unsigned char* message,unsigned char* key){
         message[j]= state[j];
     }
 }
+void printHex(unsigned char x) {
+    if (x / 16 < 10)
+        printf("%c", (char)((x / 16) + '0'));
+    if (x / 16 >= 10)
+        printf("%c", (char)((x / 16 - 10) + 'A'));
 
+    if (x % 16 < 10)
+        printf("%c", (char)((x % 16) + '0'));
+    if (x % 16 >= 10)
+        printf("%c", (char)((x % 16 - 10) + 'A'));
+}
 
 
 int main()
@@ -226,7 +238,29 @@ int main()
         13,14,15,16,
      };
 
-     aes_encrypt(message,key);
+    int originalLen=strlen((const char*)message);
+    int lenOfPaddedMessage = originalLen;
 
+
+    if(lenOfPaddedMessage % 16 != 0)
+        lenOfPaddedMessage = (lenOfPaddedMessage / 16 + 1)*16;
+
+    unsigned char *paddedMessage = (unsigned char *)malloc(lenOfPaddedMessage);
+    for(int i=0;i<lenOfPaddedMessage;i++){
+        if(i>= originalLen)paddedMessage[i]=0;
+        else paddedMessage[i] = message[i];
+    }
+    
+    //encrypt padded message
+    for(int i=0;i<lenOfPaddedMessage; i+=16)
+         aes_encrypt(paddedMessage+i,key);
+     
+    printf("encrypted message : ");
+    for(int i=0;i<lenOfPaddedMessage;i++)
+    {
+        printHex(paddedMessage[i]);
+        printf(" ");
+    }
+free(paddedMessage);
 return 0;
 }
