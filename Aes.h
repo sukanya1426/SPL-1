@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+unsigned char expandedkeys[176];
 
 unsigned char s_box[256] =  
      {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
@@ -79,8 +80,9 @@ unsigned char rcon[256]=
    0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
    
    };
+unsigned char RoundConstant[] = {0x03, 0x06, 0x0c, 0x18, 0x30, 0x60, 0xc0, 0x9b, 0x2d, 0x5a};
 
-void keyExpansionCore(unsigned char* in,unsigned char i){
+void keyExpansionCore(unsigned char* in){
     //rotate left
     unsigned char t = in[0];
     in[0]= in[1];
@@ -94,32 +96,40 @@ void keyExpansionCore(unsigned char* in,unsigned char i){
     
 
     //Rcon
-    in[0]^=rcon[i];
+    //in[0]^=rcon[i];
 
 
 }
 
 
-void keyExpansion(unsigned char* inputkey,unsigned char* expandedkeys){
+void keyExpansion(unsigned char* inputkey){
        //the first 16 bytes are the original key
        for(int i=0;i<16;i++)
               expandedkeys[i]=inputkey[i];
 
     //variables:
-    int bytesGenerated = 16;//we have generated 16 bytes so far
+   // int bytesGenerated = 16; we have generated 16 bytes so far
     int rconIteration=1;  //Rcon iteration begins at 1
     unsigned char temp[4]; //temporary storage fore core
-    while(bytesGenerated < 176){
-        //read 4 bytes for the core
-        for(int i=0;i<4;i++)
-           temp[i] = expandedkeys[i+bytesGenerated - 4];
-        //perform the core once for each 16 byte key
+    int bytesGenerated = 0;
 
-           if(bytesGenerated % 16 == 0)
+    while(bytesGenerated < 176){
+        
+        for(int i=0;i<4;i++)
+        {
+           temp[i] = expandedkeys[i+bytesGenerated - 4];
+        }
+
+        if(bytesGenerated % 16 == 0)
            {
-             keyExpansionCore(temp,rconIteration);
-             rconIteration++;
-           }   
+             keyExpansionCore(temp);
+             temp[0] = temp[0]^ RoundConstant[((bytesGenerated/16)-1)];
+           }
+        for(int j=0;j<4;j++)
+        {
+            expandedkeys[bytesGenerated+j]=temp[j]^expandedkeys[(bytesGenerated+j)-16];
+        } 
+        bytesGenerated+=4;  
     }
 }
 
@@ -150,38 +160,44 @@ void shiftRows(unsigned char* state){
     tmp[13]=state[1];
     tmp[14]=state[6];
     tmp[15]=state[11];
+
+    printf("shifting rows for encryption :\n");
+    for(int i=0;i<16;i++){
+        state[i]=tmp[i];
+        printf("%c ",state[i]);
+    }
+
 }
 void mixColumns(unsigned char* state){
 
     unsigned char tmp[16];
-
-    tmp[0]=(unsigned char)(mul2[state[0]]^mul3[state[1]]^state[2]^state[3]);
-    tmp[1]=(unsigned char)(state[0]^mul2[state[1]]^mul3[state[2]]^state[3]);
-    tmp[2]=(unsigned char)(state[0]^state[1]^mul2[state[2]]^mul3[state[3]]);
-    tmp[3]=(unsigned char)(mul3[state[0]]^state[1]^state[2]^mul2[state[3]]);
-
-    tmp[4]=(unsigned char)(mul2[state[4]]^mul3[state[5]]^state[6]^state[7]);
-    tmp[5]=(unsigned char)(state[4]^mul2[state[5]]^mul3[state[6]]^state[7]);
-    tmp[6]=(unsigned char)(state[4]^state[5]^mul2[state[6]]^mul3[state[7]]);
-    tmp[7]=(unsigned char)(mul3[state[4]]^state[5]^state[6]^mul2[state[7]]);
-
-    tmp[8]=(unsigned char)(mul2[state[8]]^mul3[state[9]]^state[10]^state[11]);
-    tmp[9]=(unsigned char)(state[8]^mul2[state[9]]^mul3[state[10]]^state[11]);
-    tmp[10]=(unsigned char)(state[8]^state[9]^mul2[state[10]]^mul3[state[11]]);
-    tmp[11]=(unsigned char)(mul3[state[8]]^state[9]^state[10]^mul2[state[11]]);
-
-    tmp[12]=(unsigned char)(mul2[state[12]]^mul3[state[13]]^state[14]^state[15]);
-    tmp[13]=(unsigned char)(state[12]^mul2[state[13]]^mul3[state[14]]^state[15]);
-    tmp[14]=(unsigned char)(state[12]^state[13]^mul2[state[14]]^mul3[state[15]]);
-    tmp[15]=(unsigned char)(mul3[state[12]]^state[13]^state[14]^mul2[state[15]]);
+    for(int i=0;i<16;i++){
+        if(i % 4 == 0)
+        {
+            tmp[i]=mul2[state[i]]^mul3[state[i+1]]^state[i+2]^state[i+3];
+        }
+        if(i % 4 ==1)
+        {
+            tmp[i]=mul2[state[i]]^mul3[state[i+1]]^state[i+2]^state[i-1];
+        }
+        if(i % 4 ==2)
+        {
+          tmp[i]=mul2[state[i]]^mul3[state[i+1]]^state[i-1]^state[i-2];
+        }
+        if(i % 4 ==3)
+        {
+            tmp[i]=mul2[state[i]]^mul3[state[i-3]]^state[i-1]^state[i-2];
+        }
+    }
+    
 
     for(int i=0;i<16;i++){
         state[i]= tmp[i];
     }
 }
-void addRoundkey(unsigned char* state,unsigned char* roundkey){
+void addRoundkey(unsigned char* state,unsigned char* key){
     for(int i=0;i<16;i++){
-        state[i]^=roundkey[i];
+        state[i]^=expandedkeys[i];
     }
 
 }
@@ -196,19 +212,19 @@ void aes_encrypt(unsigned char* message,unsigned char* key){
     int numberOfRound = 9;
     //expand the keys
     unsigned char expandedkey[176];
-    keyExpansion(key,expandedkey);
+    keyExpansion(key);
 
     addRoundkey(state,key);
-    for(int i=0;i<numberOfRound;i++){
+    for(int i=1;i<numberOfRound;i++){
         subBytes(state);
         shiftRows(state);
         mixColumns(state);
-        addRoundkey(state,expandedkey +(16 *(i+1)));
+        addRoundkey(state,key);
     }
     //final round 
     subBytes(state);
     shiftRows(state);
-    addRoundkey(state,(expandedkey + 160));
+    addRoundkey(state,key);
 
     // copy over the message with the encrypted message!
     for(int j=0;j<16;j++){
