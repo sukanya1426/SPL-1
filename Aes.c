@@ -292,98 +292,61 @@ void InverseShiftRows(unsigned char* state){
 }
 
 
-// void mixColumns(unsigned char* state){
+ void mixColumns(unsigned char* state){
 
-//     unsigned char tmp[16];
-//     for(int i=0;i<16;i++){
-//         if(i % 4 == 0)
-//         {
-//             tmp[i]=mul2[state[i]]^mul3[state[i+1]]^state[i+2]^state[i+3];
-//         }
-//         if(i % 4 ==1)
-//         {
-//             tmp[i]=state[i]^mul2[state[i+1]]^mul3[state[i+2]]^state[i+3];
-//         }
-//         if(i % 4 ==2)
-//         {
-//           tmp[i]=state[i]^state[i+1]^mul2[state[i+2]]^mul3[state[i+3]];
-//         }
-//         if(i % 4 ==3)
-//         {
-//             tmp[i]=mul3[state[i]]^state[i+1]^state[i+2]^mul2[state[i+3]];
-//         }
-//     }
+     unsigned char tmp[16];
+     for(int i=0;i<16;i++){
+         if(i % 4 == 0)
+         {
+             tmp[i]=mul2[state[i]]^mul3[state[i+1]]^state[i+2]^state[i+3];
+         }
+         if(i % 4 ==1)
+         {
+             tmp[i]=state[i]^mul2[state[i+1]]^mul3[state[i+2]]^state[i+3];
+         }
+         if(i % 4 ==2)
+         {
+           tmp[i]=state[i]^state[i+1]^mul2[state[i+2]]^mul3[state[i+3]];
+         }
+         if(i % 4 ==3)
+         {
+             tmp[i]=mul3[state[i]]^state[i+1]^state[i+2]^mul2[state[i+3]];
+         }
+     }
     
 
-//     for(int i=0;i<16;i++){
-//         state[i]= tmp[i];
-//     }
-// }
-// void InverseMixColumns(unsigned char* state){
+     for(int i=0;i<16;i++){
+         state[i]= tmp[i];
+     }
+ }
+ void InverseMixColumns(unsigned char* state){
 
-//     unsigned char tmp[16];
-//     for(int i=0;i<16;i++){
-//         if(i % 4 == 0)
-//         {
-//             tmp[i]=mul14[state[i]]^mul11[state[i+1]]^mul9[state[i+3]];
-//         }
-//         if(i % 4 ==1)
-//         {
-//             tmp[i]=mul9[state[i]]^mul14[state[i+1]]^mul11[state[i+2]];
-//         }
-//         if(i % 4 ==2)
-//         {
-//           tmp[i]=mul9[state[i+1]]^mul14[state[i+2]]^mul11[state[i+3]];
-//         }
-//         if(i % 4 ==3)
-//         {
-//             tmp[i]=mul11[state[i]]^mul9[state[i+2]]^mul14[state[i+3]];
-//         }
-//     }
+     unsigned char tmp[16];
+     for(int i=0;i<16;i++){
+         if(i % 4 == 0)
+         {
+             tmp[i]=mul14[state[i]]^mul11[state[i+1]]^mul9[state[i+3]];
+         }
+         if(i % 4 ==1)
+         {
+             tmp[i]=mul9[state[i]]^mul14[state[i+1]]^mul11[state[i+2]];
+         }
+         if(i % 4 ==2)
+         {
+           tmp[i]=mul9[state[i+1]]^mul14[state[i+2]]^mul11[state[i+3]];
+         }
+         if(i % 4 ==3)
+         {
+             tmp[i]=mul11[state[i]]^mul9[state[i+2]]^mul14[state[i+3]];
+         }
+     }
     
 
-//     for(int i=0;i<16;i++){
-//         state[i]= tmp[i];
-//     }
-// }
-void mixColumns(unsigned char* state){
-    
-unsigned char tmp[16];
-    for(int i=0;i<4;i++){
-        unsigned char s0 = state[i];
-        unsigned char s1 = state[i+4];
-        unsigned char s2 = state[i+8];
-        unsigned char s3 = state[i+12];
+     for(int i=0;i<16;i++){
+         state[i]= tmp[i];
+     }
+ }
 
-        tmp[i] = mul2[s0] ^ mul3[s1] ^ s2 ^ s3;
-        tmp[i+4] = s0 ^ mul2[s1] ^ mul3[s2] ^ s3;
-        tmp[i+8] = s0 ^ s1 ^ mul2[s2] ^ mul3[s3];
-        tmp[i+12] = mul3[s0] ^ s1 ^ s2 ^ mul2[s3];
-    }
-
-    for(int i=0;i<16;i++){
-        state[i]= tmp[i];
-    }
-}
-
-void InverseMixColumns(unsigned char* state){
-    unsigned char tmp[16];
-    for(int i=0;i<4;i++){
-        unsigned char s0 = state[i];
-        unsigned char s1 = state[i+4];
-        unsigned char s2 = state[i+8];
-        unsigned char s3 = state[i+12];
-
-        tmp[i] = mul14[s0] ^ mul11[s1] ^ mul9[s2] ^ mul13[s3];
-        tmp[i+4] = mul13[s0] ^ mul14[s1] ^ mul11[s2] ^ mul9[s3];
-        tmp[i+8] = mul9[s0] ^ mul13[s1] ^ mul14[s2] ^ mul11[s3];
-        tmp[i+12] = mul11[s0] ^ mul9[s1] ^ mul13[s2] ^ mul14[s3];
-    }
-
-    for(int i=0;i<16;i++){
-        state[i]= tmp[i];
-    }
-} 
 
 void addRoundkey(unsigned char* state,unsigned char* key,int roundNumber){
     for(int i=0;i<16;i++){
@@ -462,10 +425,10 @@ int main()
 {
     unsigned char message[] = " This is a txt file ";
     unsigned char key[16]={
-       2,2,2,2,
-       2,2,2,2,
-       2,2,2,2,
-       2,2,2,2
+      1,2,3,4,
+      5,6,7,8,
+      9,8,3,2,
+      2,3,4,5
      };
 
     int originalLen=strlen((const char*)message);
