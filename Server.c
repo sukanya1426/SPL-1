@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         error("binding Failed.");
 
-    listen(sockfd, 5); // Maximum number of queued connections
+    listen(sockfd, 5); // Maximum number of queued connections is 5
 
     clilen = sizeof(cli_addr);
 
