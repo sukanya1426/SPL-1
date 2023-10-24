@@ -15,7 +15,7 @@ void error(const char *msg) {
 int main(int argc, char *argv[]) {
     int sockfd, newsockfd, portno;
     socklen_t clilen;
-    char buffer[255];
+    char buffer[1024];
     struct sockaddr_in serv_addr, cli_addr;
     int n;
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         error("binding Failed.");
 
-    listen(sockfd, 5); // Maximum number of queued connections is 5
+    listen(sockfd, 5); // Maximum number of queued connections
 
     clilen = sizeof(cli_addr);
 
@@ -58,19 +58,31 @@ int main(int argc, char *argv[]) {
 
     FILE *fp;
     int ch = 0;
-    fp=fopen("file_received.txt","a");
-    int words;
-    read(newsockfd,&words,sizeof(int));
+    fp=fopen("file_received.bmp","wb");
+    long fileSize;
+    read(newsockfd,&fileSize,sizeof(long));
 
-    while(ch!= words)  //words number of time
+    if(fp == NULL)
     {
-        read(newsockfd,buffer,255); //here we will get the words
-        fprintf(fp,"%s ",buffer);
-        ch++;
+        perror("Error opening file");
+        exit(1);
     }
 
-    printf(" the file has been received successfully .it is saved by name file_received.txt");
+    while(ch!= fileSize)  
+    {
+        size_t bytesRead = read(newsockfd,buffer,sizeof(buffer));
+        if(bytesRead <= 0){
+            perror("Error reading from socket");
+            exit(1);
+        }
 
+        fwrite(buffer,1,bytesRead,fp);
+        ch += bytesRead;
+    }
+
+    printf(" the BMP file has been received successfully .it is saved by name file_received.txt");
+    
+    fclose(fp);
     close(newsockfd);
     close(sockfd);
     
