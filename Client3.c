@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     int sockfd, portno, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-    unsigned char buffer[1024];  // Use a buffer of sufficient size for BMP files
+    char buffer[1024];  
 
     if (argc < 3) {
         fprintf(stderr, "Usage: %s hostname port\n", argv[0]);
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
     FILE *f;
     int ch;
-    f = fopen("file.bmp", "rb");  
+    f = fopen("file.csv", "r"); 
 
     while (1) {
         ch = fgetc(f);
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     fclose(f);
     close(sockfd);
 
-    printf("The BMP file has been successfully sent. Thank you.\n");
+    printf("The CSV file has been successfully sent. Thank you.\n");
 
     return 0;
 }

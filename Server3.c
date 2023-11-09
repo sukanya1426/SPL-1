@@ -14,7 +14,7 @@ void error(const char *msg) {
 int main(int argc, char *argv[]) {
     int sockfd, newsockfd, portno;
     socklen_t clilen;
-    unsigned char buffer[1024];  // buffer of sufficient size for BMP files
+    char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
     int n;
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr) < 0))
         error("binding Failed.");
 
-    listen(sockfd, 5);  // Maximum number of queued connections is 5
+    listen(sockfd, 5); 
 
     clilen = sizeof(cli_addr);
 
@@ -49,16 +49,17 @@ int main(int argc, char *argv[]) {
         error("error on Accept");
 
     FILE *fp;
-    fp = fopen("file_received.bmp", "wb");  //binary write 
+    int ch = 0;
+    fp = fopen("file_received.csv", "w");  
 
     while (1) {
-        n = read(newsockfd, buffer, sizeof(buffer));
+        n = read(newsockfd, buffer, 255);
         if (n <= 0)
-            break;  // No more data to read
-        fwrite(buffer, 1, n, fp);
+            break;  
+        fprintf(fp, "%s", buffer);
     }
 
-    printf("The BMP file has been received successfully and saved as file_received.bmp.\n");
+    printf("The CSV file has been received successfully and saved as file_received.csv.\n");
 
     fclose(fp);
     close(newsockfd);

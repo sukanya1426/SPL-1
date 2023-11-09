@@ -1,19 +1,11 @@
 #include <stdio.h>
 #include<string.h>
 #include<stdlib.h>
-
-
-
-
 #define roundNumber 10
 #define paddingCharacter '$'
 
-//Some global array declaration
-//These values are preset in the algorithm, can't be picked arbitrarily and are found through extensive research.
 
 unsigned char roundConstant[10]={0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36};
-
-//for encoding
 unsigned char sBox[256] ={
 	0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
 	0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
@@ -32,7 +24,6 @@ unsigned char sBox[256] ={
 	0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
 	0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
 };
-
 unsigned char inverseSbox[256] ={
 	0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
 	0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
@@ -72,7 +63,7 @@ unsigned char TableFor2[] ={
 	0xfb,0xf9,0xff,0xfd,0xf3,0xf1,0xf7,0xf5,0xeb,0xe9,0xef,0xed,0xe3,0xe1,0xe7,0xe5
 };
 
-//for decoding
+
 
 unsigned char TableFor3[] ={
 	0x00,0x03,0x06,0x05,0x0c,0x0f,0x0a,0x09,0x18,0x1b,0x1e,0x1d,0x14,0x17,0x12,0x11,
@@ -168,10 +159,10 @@ unsigned char TableFor14[256] ={
 	0xd7,0xd9,0xcb,0xc5,0xef,0xe1,0xf3,0xfd,0xa7,0xa9,0xbb,0xb5,0x9f,0x91,0x83,0x8d
 };
 
-//for key storing after each round.
-unsigned char modifiedKey[176];//44*4 = 176
 
-// necessary functions follow
+unsigned char RoundKey[176];//44*4 = 176
+
+
 
 void substitutionWord(unsigned char* input)
 {
@@ -191,30 +182,27 @@ void rotationOfWord(unsigned char* input)
 void expansionKey(unsigned char *originalKey)
 {
     int idx;
-    for (idx = 0; idx <= 15; idx++) modifiedKey[idx]=originalKey[idx]; //storing w[0...3]
+    for (idx = 0; idx <= 15; idx++) RoundKey[idx]=originalKey[idx];
 
-    //first round is completed.
-
-    //now, idx value is 16. it is pointing to word 4 now.
-
+    
     while (idx<=175)
     {
         unsigned char prevWord[4];
         for (int i = 0; i < 4; i++)
-            prevWord[i]= modifiedKey[idx + i - 4];  // previous word is stored first.
+            prevWord[i]= RoundKey[idx + i - 4];  
 
         if((idx%16)==0)
         {
             rotationOfWord(prevWord);
             substitutionWord(prevWord);
 
-            //now, x-oring:
+            //x-oring:
 
             prevWord[0] ^= roundConstant[(idx/16)-1];
         }
 
         for (int k = 0; k < 4; k++)
-            modifiedKey[idx+k]=prevWord[k]^modifiedKey[idx-16+k];
+            RoundKey[idx+k]=prevWord[k]^RoundKey[idx-16+k];
         idx+=4;
     }
 
@@ -225,7 +213,7 @@ void subBytes(unsigned char* state)
         state[i]=sBox[state[i]];
 }
 
-void cyclicLeftShiftRow(unsigned char* state)
+void ShiftRow(unsigned char* state)
 {
     unsigned char temp[16];
 
@@ -233,28 +221,24 @@ void cyclicLeftShiftRow(unsigned char* state)
     temp[4]=state[4];
     temp[8]=state[8];
     temp[12]=state[12];
-    //zero cyclic left shift above
+    
 
     temp[13]=state[1];
     temp[1]=state[5];
     temp[5]=state[9];
     temp[9]=state[13];
-    //cyclic left shift by one above.
+    
 
     temp[10]=state[2];
     temp[14]=state[6];
     temp[2]=state[10];
     temp[6]=state[14];
-    //cyclic left shift by two above.
+    
 
     temp[7]=state[3];
     temp[11]=state[7];
     temp[15]=state[11];
     temp[3]=state[15];
-    //cyclic left shift by three above.
-
-
-    //have manually performed the cyclic left shifts.
 
     for (int i = 0; i < 16; i++)
         state[i]=temp[i];
@@ -282,7 +266,7 @@ void mixColumn(unsigned char* state)
 void addRoundKey(unsigned char* state,int roundNum)
 {
     for (int i = 0; i < 16; i++)
-        state[i] ^= modifiedKey[roundNum*16+i];
+        state[i] ^= RoundKey[roundNum*16+i];
 }
 
 
@@ -294,7 +278,7 @@ void encryption(unsigned char* message)
     for (int i = 1; i <= roundNumber; i++)
     {
         subBytes(message);
-        cyclicLeftShiftRow(message);
+        ShiftRow(message);
 
         if(i != roundNumber)
             mixColumn(message);
@@ -306,10 +290,10 @@ void encryption(unsigned char* message)
 void addRoundKeyForDecryption(unsigned char* state,int roundNum)
 {
     for (int i = 0; i < 16; i++)
-        state[i] ^= modifiedKey[160-roundNum*16+i];//coming from the back side this time.
+        state[i] ^= RoundKey[160-roundNum*16+i];//coming from the back side this time.
 }
 
-void inverseCyclicShiftRows(unsigned char* state)
+void inverseShiftRows(unsigned char* state)
 {
     unsigned char temp[16];
 
@@ -368,7 +352,7 @@ void decryption(unsigned char* cipherText)
 
     for (int i = 1; i <= roundNumber; i++)
     {
-        inverseCyclicShiftRows(cipherText);
+        inverseShiftRows(cipherText);
         inverseSubBites(cipherText);
 
         addRoundKeyForDecryption(cipherText,i);
@@ -380,15 +364,22 @@ void decryption(unsigned char* cipherText)
 
 }
 
-void printStateMatrix(unsigned char* state,int numOfVals)
+
+
+void printDecrypt(unsigned char* text,int len)
 {
-    for (int i = 0; i < numOfVals-1; i++)
+    for (int i = 0; i < len -1; i++)
     {
-        printf("%X ",state[i]);
+        printf("%c",text[i]);
+
+        if(text[i+1]==paddingCharacter && text[i+2]==paddingCharacter)
+        {
+            text[i+1]='\0';
+            break;
+        }
     }
 }
-
-void printDecryptTxt(unsigned char* text,int len)
+void printEncrypt(unsigned char* text,int len)
 {
     for (int i = 0; i < len -1; i++)
     {
@@ -402,29 +393,19 @@ void printDecryptTxt(unsigned char* text,int len)
     }
 }
 
-/*
+
+
 int main() {
-    string filename;
+    char filename[50];
+    
 
-    cout << "Enter the name of the input text file: ";
-    cin >> filename;
+    char inputText [] = "sukkkkk";   
 
-    ifstream inputFile(filename);
-    if (!inputFile) {
-        cout << "File not found or cannot be opened. Exiting..." << endl;
-        return 1;
-    }
-
-    // Read input text from file
-    string inputText((istreambuf_iterator<char>(inputFile)),
-                     istreambuf_iterator<char>());
-    inputFile.close();
-
-    unsigned char key[] = "TasnimMahfuznafi";
+    unsigned char key[] = "abcdef";
     expansionKey(key);
 
-    // Finding the accurate block size (16, 32, 48, 64, 128 bytes)
-    int txtLen = inputText.size();
+    
+    int txtLen = strlen(inputText);
     int extendedLen;
 
     if (txtLen % 16 != 0)
@@ -453,227 +434,27 @@ int main() {
             encryptedTxt[i + j] = temp[j];
     }
 
-    // Write encrypted text to a file
-    ofstream encryptedFile("encrypted.txt");
-    encryptedFile.write(reinterpret_cast<char*>(encryptedTxt), extendedLen);
-    encryptedFile.close();
-
-    // Read encrypted text from the file
-    ifstream encryptedInput("encrypted.txt");
-    string encryptedText((istreambuf_iterator<char>(encryptedInput)),
-                         istreambuf_iterator<char>());
-    encryptedInput.close();
-
+  
     unsigned char decryptedTxt[extendedLen + 1];
-
-    for (int i = 0; i < extendedLen; i += 16) {
-        unsigned char temp[16];
-        for (int j = 0; j < 16; j++)
-            temp[j] = encryptedText[i + j];
-        decryption(temp);
-        for (int j = 0; j < 16; j++)
-            decryptedTxt[i + j] = temp[j];
-        if (i + 16 == extendedLen)
-            decryptedTxt[i + 16] = '\0';
-    }
-
-    cout << "Decrypted Text: ";
-    printDecryptTxt(decryptedTxt, sizeof(decryptedTxt));
-    cout << endl;
-
-    return 0;
-}*/
-/*
-
-int main() {
-    string filename;
-
-    cout << "Enter the name of the input text file: ";
-    cin >> filename;
-
-    ifstream inputFile(filename);
-    if (!inputFile) {
-        cout << "File not found or cannot be opened. Exiting..." << endl;
-        return 1;
-    }
-
-    // Read input text from file
-    string inputText((istreambuf_iterator<char>(inputFile)),
-                     istreambuf_iterator<char>());
-    inputFile.close();
-
-    unsigned char key[] = "TasnimMahfuznafi";
-    expansionKey(key);
-
-    // Finding the accurate block size (16, 32, 48, 64, 128 bytes)
-    int txtLen = inputText.size();
-    int extendedLen;
-
-    if (txtLen % 16 != 0)
-        extendedLen = txtLen + (16 - (txtLen % 16));
-    else
-        extendedLen = txtLen;
-
-    // Padding the extra bytes
-    unsigned char encryptedTxt[extendedLen + 1];
-
-    for (int i = 0; i < extendedLen; i++) {
-        if (i < txtLen)
-            encryptedTxt[i] = inputText[i];
-        else
-            encryptedTxt[i] = paddingCharacter;
-        if (i + 1 == extendedLen)
-            encryptedTxt[i + 1] = '\0';
-    }
 
     for (int i = 0; i < extendedLen; i += 16) {
         unsigned char temp[16];
         for (int j = 0; j < 16; j++)
             temp[j] = encryptedTxt[i + j];
-        encryption(temp);
-        for (int j = 0; j < 16; j++)
-            encryptedTxt[i + j] = temp[j];
-    }
-
-    // Write encrypted text to a file
-    ofstream encryptedFile("encrypted.txt");
-    encryptedFile.write(reinterpret_cast<char*>(encryptedTxt), extendedLen);
-    encryptedFile.close();
-
-    // Read encrypted text from the file
-    ifstream encryptedInput("encrypted.txt");
-    string encryptedText((istreambuf_iterator<char>(encryptedInput)),
-                         istreambuf_iterator<char>());
-    encryptedInput.close();
-
-    unsigned char decryptedTxt[extendedLen + 1];
-
-    for (int i = 0; i < extendedLen; i += 16) {
-        unsigned char temp[16];
-        for (int j = 0; j < 16; j++)
-            temp[j] = encryptedText[i + j];
         decryption(temp);
         for (int j = 0; j < 16; j++)
             decryptedTxt[i + j] = temp[j];
         if (i + 16 == extendedLen)
             decryptedTxt[i + 16] = '\0';
     }
+    printf("Encrypted text : ");
+    printEncrypt(encryptedTxt,extendedLen);
+    
+    printf("\n");
 
-    cout << "Decrypted Text: ";
-    printDecryptTxt(decryptedTxt, sizeof(decryptedTxt));
-    cout << endl;
-
-    return 0;
-}
-*/
-
-
-int main() {
-    string filename;
-
-
-
-
-
-        int numberOfChats, choiceChat;
-        ifstream inputFile1("number of chats.txt");
-        inputFile1 >> numberOfChats;
-        inputFile1.close();
-
-
-
-
-
-
-        do{
-
-        cout<< "You have "<<numberOfChats<<" number of available chats to read. Which one do you like?"<<endl;
-        cin >> choiceChat;
-
-        }while(choiceChat > numberOfChats || choiceChat < 1);
-
-
-        string historyName = "chatHistory" + to_string(choiceChat) + ".txt";
-
-
-
-    //cout << "Enter the name of the input text file: ";
-    //cin >> filename;
-
-    //ifstream inputFile(filename);
-    ifstream inputFile(historyName);
-
-
-    if (!inputFile) {
-        cout << "File not found or cannot be opened. Exiting..." << endl;
-        return 1;
-    }
-
-    // Read input text from file
-    string inputText((istreambuf_iterator<char>(inputFile)),
-                     istreambuf_iterator<char>());
-    inputFile.close();
-
-    unsigned char key[] = "TasnimMahfuznafi";
-    expansionKey(key);
-
-    // Finding the accurate block size (16, 32, 48, 64, 128 bytes)
-    int txtLen = inputText.size();
-    int extendedLen;
-
-    if (txtLen % 16 != 0)
-        extendedLen = txtLen + (16 - (txtLen % 16));
-    else
-        extendedLen = txtLen;
-
-    // Padding the extra bytes
-    unsigned char encryptedTxt[extendedLen + 1];
-
-    for (int i = 0; i < extendedLen; i++) {
-        if (i < txtLen)
-            encryptedTxt[i] = inputText[i];
-        else
-            encryptedTxt[i] = paddingCharacter;
-        if (i + 1 == extendedLen)
-            encryptedTxt[i + 1] = '\0';
-    }
-
-    for (int i = 0; i < extendedLen; i += 16) {
-        unsigned char temp[16];
-        for (int j = 0; j < 16; j++)
-            temp[j] = encryptedTxt[i + j];
-        encryption(temp);
-        for (int j = 0; j < 16; j++)
-            encryptedTxt[i + j] = temp[j];
-    }
-
-    // Write encrypted text to a file
-    ofstream encryptedFile("encrypted.txt");
-    encryptedFile.write(reinterpret_cast<char*>(encryptedTxt), extendedLen);
-    encryptedFile.close();
-
-    // Read encrypted text from the file
-    ifstream encryptedInput("encrypted.txt");
-    string encryptedText((istreambuf_iterator<char>(encryptedInput)),
-                         istreambuf_iterator<char>());
-    encryptedInput.close();
-
-    unsigned char decryptedTxt[extendedLen + 1];
-
-    for (int i = 0; i < extendedLen; i += 16) {
-        unsigned char temp[16];
-        for (int j = 0; j < 16; j++)
-            temp[j] = encryptedText[i + j];
-        decryption(temp);
-        for (int j = 0; j < 16; j++)
-            decryptedTxt[i + j] = temp[j];
-        if (i + 16 == extendedLen)
-            decryptedTxt[i + 16] = '\0';
-    }
-
-    cout << "Decrypted Text: ";
-    printDecryptTxt(decryptedTxt, sizeof(decryptedTxt));
-    cout << endl;
+    printf("Decrypted text : ");
+    printDecrypt(decryptedTxt, sizeof(decryptedTxt));
+    
 
     return 0;
 }
