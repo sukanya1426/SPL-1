@@ -14,7 +14,7 @@ void error(const char *msg) {
 int main(int argc, char *argv[]) {
     int sockfd, newsockfd, portno;
     socklen_t clilen;
-    unsigned char buffer[1024];  // buffer of sufficient size for BMP files
+    unsigned char buffer[4000];  // buffer of sufficient size for BMP files
     struct sockaddr_in serv_addr, cli_addr;
     int n;
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
 
-    if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr) < 0))
+    if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         error("binding Failed.");
 
     listen(sockfd, 5);  // Maximum number of queued connections is 5

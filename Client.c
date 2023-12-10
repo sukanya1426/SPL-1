@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     FILE *f;
     int words=0;
     char c;
-    f=fopen("file.txt","r");
+    f=fopen("description.txt","r");
     while((c=getc(f))!=EOF)
     {
         fscanf(f,"%s",buffer);   //traverse the file word by word
