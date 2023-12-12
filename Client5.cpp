@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include<bits/stdc++.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -7,7 +8,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include<ctype.h>
-#include"Aes.c"
+#include"Aess.cpp"
+using namespace std;
 #define SIZE 1024
 
 void error(const char *msg) {
@@ -26,7 +28,17 @@ void send_file(FILE *fp, int sockfd,char*filename) {
         exit(1);
     }
 
+    cout<<"Extension: "<<extension<<endl;
+
     // Send the file extension
+
+    size_t extensionLength = strlen(extension + 1); 
+    cout<<"ExtensionLength"<<extensionLength<<endl; // +1 to skip the dot in the extension
+   if (send(sockfd, &extensionLength, sizeof(size_t), 0) == -1) {
+    perror("[-]Error in sending file extension length.");
+    exit(1);
+    }
+
     if (send(sockfd, extension + 1, strlen(extension + 1), 0) == -1) {
         perror("[-]Error in sending file extension.");
         exit(1);
@@ -34,6 +46,16 @@ void send_file(FILE *fp, int sockfd,char*filename) {
 
     // Send the file content
     while ((bytesRead = fread(data, 1, sizeof(data), fp)) > 0) {
+        //Encrypt the data using AES encryption
+        for(size_t i=0;i< bytesRead;i+=16){
+            unsigned char temp[16];
+            for(size_t j=0;j<16;j++)
+               temp[j] = data[i+j];
+               encryption(temp);
+               for(size_t j =0 ; j<16;j++)
+                  data[i+j]= temp[j];
+        }
+
         if (send(sockfd, data, bytesRead, 0) == -1) {
             perror("[-]Error in sending file content.");
             exit(1);
@@ -80,18 +102,16 @@ int main(int argc, char *argv[]) {
     fgets(filename, sizeof(filename), stdin);
     filename[strcspn(filename, "\n")] = 0;  // Remove newline character
 
-    // Extract file extension
-    char *fileExtension = strchr(filename, '.');
-    if (fileExtension == NULL) {
-    perror("[-]Error: File extension not found.");
-    exit(1);
-    }
     fp = fopen(filename, "rb");
-    if (fp == NULL) {
-    perror("[-]Error in reading file.");
-    exit(1);
-    }
+      ifstream inputFile(filename);
 
+
+      if (!inputFile) {
+          cout << "File not found or cannot be opened. Exiting..." << endl;
+          return 1;
+     }
+
+   
     send_file(fp, sockfd, filename); // +1 to skip the dot in the extension
     printf("[+]File data sent successfully.\n");
 
