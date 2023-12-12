@@ -5,7 +5,7 @@
 using namespace std;
 #define roundNumber 10
 #define paddingCharacter '$'
-
+unsigned char key[] = "abcdef";
 
 unsigned char roundConstant[10]={0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36};
 unsigned char sBox[256] ={
@@ -274,7 +274,7 @@ void addRoundKey(unsigned char* state,int roundNum)
 
 void encryption(unsigned char* message)
 {
-
+    expansionKey(key);
     addRoundKey(message,0);
 
     for (int i = 1; i <= roundNumber; i++)
@@ -350,6 +350,7 @@ void inverseMixColumn(unsigned char* state)
 
 void decryption(unsigned char* cipherText)
 {
+    expansionKey(key);
     addRoundKeyForDecryption(cipherText,0);
 
     for (int i = 1; i <= roundNumber; i++)
@@ -404,7 +405,7 @@ void printEncrypt(unsigned char* text,int len)
 //     char inputText [] = "sukkkkk";   
 
 //     unsigned char key[] = "abcdef";
-//     expansionKey(key);
+//     
 
     
 //     int txtLen = strlen(inputText);

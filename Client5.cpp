@@ -18,7 +18,7 @@ void error(const char *msg) {
 }
 
 void send_file(FILE *fp, int sockfd,char*filename) {
-    char data[SIZE];
+    unsigned char data[SIZE];
     size_t bytesRead;
 
     // Get the file extension
@@ -52,9 +52,12 @@ void send_file(FILE *fp, int sockfd,char*filename) {
             for(size_t j=0;j<16;j++)
                temp[j] = data[i+j];
                encryption(temp);
+        //    printEncrypt(temp,sizeof(data));
                for(size_t j =0 ; j<16;j++)
                   data[i+j]= temp[j];
+        
         }
+       // printEncrypt(data,sizeof(data));
 
         if (send(sockfd, data, bytesRead, 0) == -1) {
             perror("[-]Error in sending file content.");

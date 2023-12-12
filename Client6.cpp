@@ -322,7 +322,7 @@ void send_file(FILE *fp, int sockfd,char*filename) {
     while ((bytesRead = fread(data, 1, sizeof(data), fp)) > 0) {
 
 
-    ifstream inputFile(filename);
+    ifstream inputFile(data);  // ekhane file name chilo
     if (!inputFile) {
         cout << "File not found or cannot be opened. Exiting..." << endl;
         

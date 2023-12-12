@@ -169,6 +169,8 @@ unsigned char TableFor14[256] ={
 
 unsigned char RoundKey[176];//44*4 = 176
 
+
+
 void addRoundKeyForDecryption(unsigned char* state,int roundNum)
 {
     for (int i = 0; i < 16; i++)
@@ -284,6 +286,18 @@ void write_file(int sockfd) {
             break;
         }
         size_t written = fwrite(buffer, 1, n, fp);
+		unsigned char key[] = "TasnimMahfuznafi";
+      //  expansionKey(key);
+
+    // Finding the accurate block size (16, 32, 48, 64, 128 bytes)
+    int txtLen = inputText.size();
+    int extendedLen;
+
+    if (txtLen % 16 != 0)
+        extendedLen = txtLen + (16 - (txtLen % 16));
+    else
+        extendedLen = txtLen;
+
         if (written < n) {
             perror("[-]Error in writing to file.");
             break;
