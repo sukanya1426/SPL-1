@@ -25,4 +25,25 @@ Number,Footnote
 24,Targeted basic research is research to produce a broad base of new knowledge likely to underpin solutions to current or future applications. 
 25,Applied research is investigation undertaken to acquire new knowledge. It is directed primarily towards a specific practical aim or objective.
 26,"Experimental research is systematic work undertaken using existing knowledge for the purpose of creating new or improved materials, products, and/or services."
-27,"Businesses were asked to indicate one main reason for carrying out or funding R&D. However, some businesses indicated more than one reason. Therefore some percentages may sum to mo
+27,"Businesses were asked to indicate one main reason for carrying out or funding R&D. However, some businesses indicated more than one reason. Therefore some percentages may sum to more than 100%. Percentages are of total businesses in each industry group carrying out R&D."
+28,"Some categories or groups may not equal the total, as some units can not be imputed or corrected, due to lack of appropriate information."
+29,Excludes licensing of intellectual property.
+30,Excludes subsidaries.
+31,No longer collected after 2014.
+32,GDP is based on Stats NZ's GDP current price expenditure measure for the year ended 31 March for New Zealand. Latest GDP figure is provisional.
+33,Sourced from Organisation for Economic Co-operation and Development (OECD)  Main Science and Technology Indicators (MSTI). https://stats.oecd.org/Index.aspx?DataSetCode=MSTI_PUB.
+34,"Due to OECD reporting standards, some countries figures above may actually pertain to the financial year ended year-1."
+35,"Based on Rolling Mean employment. For years 2016 to 2019, RME was as at time of data collection. For 2020 onwards RME was as at time of sample selection."
+Notes:,
+"Due to small changes in population and sample selection criteria, as well as changes in stratification, some years are not directly comparable",
+"Due to rounding, figures may not add to stated totals.",
+Relative sampling errors quantify the variability that occurs by chance because a sample rather than an entire population is surveyed. More information on how to use relative sampling errors can be found in DataInfo+:,
+"Some figures may not have an associated relative sampling error, due to having a 100% response rate for a full coverage sampling design strata.",
+Symbols:,
+... Data not collected,
+.. Data not applicable or no data available,
+C Confidential,
+S Supressed for quality reasons,
+R Revised,
+P Provisional,
+$$$$

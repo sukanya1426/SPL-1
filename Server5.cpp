@@ -82,7 +82,9 @@ void write_file(int sockfd) {
         }
         bzero(buffer, SIZE);
     }
-    free(extension);
+    //free(extension);
+
+    extension = nullptr;
     fclose(fp);
 }
 

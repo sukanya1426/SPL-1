@@ -399,7 +399,7 @@ int main() {
     char filename[50];
     
 
-    char inputText [] = "sukkkkk";   
+    char inputText [] = "i am sukanya";   
 
     unsigned char key[] = "abcdef";
     expansionKey(key);
