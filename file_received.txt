@@ -1,1 +1,1 @@
-socket- connecting two pc/terminal header files - #<sys/socket.h> - defines sockaddr structure that contains address family,sa family,port number sockaddr_in serv_addr structure contains -> serv_addr.sin)family = af_inet 
+socket- connecting two pc/terminal header files - #<sys/socket.h> - defines sockaddr structure that contains address family,sa family,port number sockaddr_in serv_addr structure contains -> serv_addr.sin)family = af_inet   ©çºeiK§ZÞ€¼ÿ.=  ©çºeiK§ZÞ€¼ÿ.= 
