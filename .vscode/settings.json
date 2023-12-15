@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "ws2tcpip.h": "c"
+        "ws2tcpip.h": "c",
+        "iosfwd": "cpp"
     }
 }

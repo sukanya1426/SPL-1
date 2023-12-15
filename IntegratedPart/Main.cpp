@@ -13,6 +13,8 @@
 #include "Client5.cpp"
 #include "chatClient.cpp"
 #include "chatServer.cpp"
+#include "HistoryClient.cpp"
+#include "HistoryServer.cpp"
 using namespace std;
 #define SIZE 4000
 // #define Client_side_SIZE 4000
@@ -29,7 +31,7 @@ int main(int argc, char **argv)
     int choice ;
     printf("-----------  MENU  -----------\n\n");
 
-    printf("1.Chat with server  .\n\n2.Send a file to server .\n\n");//\n\n3.Chat and send the history to server .\n\n");
+    printf("1.Chat with server  .\n\n2.Send a file to server .\n\n3.Read chat history .\n\n");
     
 
     while(1)
@@ -65,15 +67,22 @@ int main(int argc, char **argv)
            ClientSoc(argc,argv);
        break;
     }
-    // case 3 :
-    // {
-    //    chatClient(argc,argv);
-    //    chatServer(argc,argv);
-    //    ClientSoc(argc,argv);
-    //    ServerSoc(argc,argv);
+     case 3 :
+   {
+        printf("1.To operate as a server\n2.To operate as a client\n");
+        int x;
+        scanf("%d",&x);
+        getchar();
+        if(x==1){
+             HistoryServer(argc,argv);
+       }
+        else
+            HistoryClient(argc,argv);
+       break;
 
-    //    break;
-    // }
+
+
+   }
      case 0:
         exitProgram();
         return 0; 

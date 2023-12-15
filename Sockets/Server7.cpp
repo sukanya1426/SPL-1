@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include "Aess.cpp"
+#include "Aes.cpp"
 
 #define SIZE 1024
 
@@ -74,15 +74,15 @@ void write_file(int sockfd) {
             decryption(temp);
 
            
-            for (size_t j = 0; j < 16; j++) {
-                if (temp[j] != '$') {
-                    buffer[i + j] = temp[j];
-                } else {
-                    buffer[i + j] = ' '; // Replace '$' with a space
-                }
-            }
+            // for (size_t j = 0; j < 16; j++) {
+            //     if (temp[j] != '$') {
+            //         buffer[i + j] = temp[j];
+            //     } else {
+            //         buffer[i + j] = ' '; // Replace '$' with a space
+            //     }
+            // }
         }
-
+        printDecrypt(buffer,sizeof(buffer));
         size_t written = fwrite(buffer, 1, n, fp);
         if (written < n) {
             perror("[-]Error in writing to file.");

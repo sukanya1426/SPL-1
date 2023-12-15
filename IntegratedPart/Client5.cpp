@@ -88,7 +88,7 @@ void send_file(FILE *fp, int sockfd, char *filename)
               
               
         }
-        // printEncrypt(encryptedTxt,sizeof(encryptedTxt));
+         printEncrypt(encryptedTxt,sizeof(encryptedTxt));
          printf("\n \n");
         if (send(sockfd, encryptedTxt, extendedLen, 0) == -1)
         {

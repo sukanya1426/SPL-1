@@ -66,8 +66,16 @@ int main(int argc, char *argv[]) {
     {
         read(newsockfd,buffer,255); //here we will get the words
         fprintf(fp,"%s ",buffer);
+        //printf(ch);
         ch++;
     }
+
+    char buffer1[200]; // Adjust the size according to your needs
+
+    while (fgets(buffer, sizeof(buffer1), fp) != NULL) {
+        printf("%s", buffer1);
+    }
+
 
     printf(" the file has been received successfully .it is saved by name file_received.txt");
 

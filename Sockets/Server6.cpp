@@ -163,7 +163,7 @@
                 }
             }
         }
-
+        printDecrypt(buffer,sizeof(buffer));
         size_t written = fwrite(buffer, 1, n, fp);
         if (written < n) {
             perror("[-]Error in writing to file.");
