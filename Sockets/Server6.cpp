@@ -2,11 +2,11 @@
  #include <stdlib.h>
  #include <string.h>
  #include <unistd.h>
- #include<sys/types.h>
- #include<sys/socket.h>
- #include<netinet/in.h>
-#include"Aess.cpp"
-#define SERVER_SIDE_SIZE 1024
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include"Aess.cpp"
+ #define SERVER_SIDE_SIZE 1024
 
 
  void Server_error(const char *msg) {

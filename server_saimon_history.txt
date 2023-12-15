@@ -1,3 +1,0 @@
-saimon: hi
-Server: hello
-saimon: Bye

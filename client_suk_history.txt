@@ -1,9 +1,0 @@
-suk: hi
-Server: hello
-suk: what are you doing?
-Server: nothing : (
-suk: okay Bye
-Server: Bye
-suk: hi
-Server: hello
-suk: Bye

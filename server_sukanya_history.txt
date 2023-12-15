@@ -1,3 +1,0 @@
-sukanya: hi
-Server: hello
-sukanya: Bye

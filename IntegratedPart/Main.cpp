@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     int choice ;
     printf("-----------  MENU  -----------\n\n");
 
-    printf("1.Chat with server  .\n\n2.Send a file to server .\n\n3.Chat and send the history to server .\n\n");
+    printf("1.Chat with server  .\n\n2.Send a file to server .\n\n");//\n\n3.Chat and send the history to server .\n\n");
     
 
     while(1)

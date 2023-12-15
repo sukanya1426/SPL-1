@@ -1,4 +1,0 @@
-1. text file a as it is ashe na
-2. csv te string 
-3. binary stream e transfer korar age starting 32 bit (suppose) will be used to identify the type of the file
-  shob binary te 
