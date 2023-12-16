@@ -1,4 +1,6 @@
 #include <stdio.h>
+// #include<SDL2/SDL.h>
+// #include<SDL2/SDL_ttf.h>
 #include <bits/stdc++.h>
 #include <stdlib.h>
 #include <string.h>

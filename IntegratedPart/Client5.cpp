@@ -10,8 +10,99 @@
 // #include <ctype.h>
 // #include "Aess.cpp"
 // using namespace std;
+ #include<SDL2/SDL.h>
+ #include<SDL2/SDL_ttf.h>
+ #include <thread>
+ #include <chrono>
+
+//#include"../../sdl/src/ServerBox.cpp"
 #define SIZE 4000
 
+ void delay(int milliseconds) {
+     std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+ }
+
+ void box() {
+     SDL_Window* window = SDL_CreateWindow("File is sending", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 480, SDL_WINDOW_SHOWN);
+     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+     SDL_Init(SDL_INIT_VIDEO);
+     TTF_Init();
+
+     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+     SDL_RenderClear(renderer);
+
+     // Draw Server box
+     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+     SDL_Rect serverBoxRect = {50, 50, 200, 100};
+     SDL_RenderDrawRect(renderer, &serverBoxRect);
+     SDL_RenderFillRect(renderer, &serverBoxRect);
+
+     TTF_Font* font = TTF_OpenFont("arial.ttf", 25);
+     SDL_Color color = {0, 0, 0};
+     SDL_Surface* serverSurface = TTF_RenderText_Solid(font, "Server", color);
+     SDL_Texture* serverTexture = SDL_CreateTextureFromSurface(renderer, serverSurface);
+
+     int serverTexW = 0;
+     int serverTexH = 0;
+     SDL_QueryTexture(serverTexture, NULL, NULL, &serverTexW, &serverTexH);
+
+     SDL_Rect serverDstrect = {(serverBoxRect.w - serverTexW) / 2 + serverBoxRect.x, (serverBoxRect.h - serverTexH) / 2 + serverBoxRect.y, serverTexW, serverTexH};
+     SDL_RenderCopy(renderer, serverTexture, NULL, &serverDstrect);
+
+     // Draw Loading dots
+     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+     for (int i = 0; i < 6; ++i) {
+         SDL_Rect dotRect = {serverBoxRect.x + serverBoxRect.w + 30 + i * 20, serverBoxRect.y + serverBoxRect.h / 2 - 5, 10, 10};
+         SDL_RenderFillRect(renderer, &dotRect);
+         SDL_RenderPresent(renderer);
+         delay(1000);  // Delay for 1 second between dots
+     }
+
+     // Draw Client box
+     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+     SDL_Rect clientBoxRect = {serverBoxRect.x + serverBoxRect.w + 200, 50, 200, 100};  // Added distance between boxes
+     SDL_RenderDrawRect(renderer, &clientBoxRect);
+     SDL_RenderFillRect(renderer, &clientBoxRect);
+
+     SDL_Surface* clientSurface = TTF_RenderText_Solid(font, "Client", color);
+     SDL_Texture* clientTexture = SDL_CreateTextureFromSurface(renderer, clientSurface);
+
+     int clientTexW = 0;
+     int clientTexH = 0;
+     SDL_QueryTexture(clientTexture, NULL, NULL, &clientTexW, &clientTexH);
+
+     SDL_Rect clientDstrect = {(clientBoxRect.w - clientTexW) / 2 + clientBoxRect.x, (clientBoxRect.h - clientTexH) / 2 + clientBoxRect.y, clientTexW, clientTexH};
+     SDL_RenderCopy(renderer, clientTexture, NULL, &clientDstrect);
+
+     SDL_RenderPresent(renderer);
+
+    // delay(3000);  // Delay for 3 seconds
+         // Event loop
+     bool quit = false;
+     SDL_Event e;
+
+     // Event loop
+     while (!quit) {
+         // Handle events
+         while (SDL_PollEvent(&e) != 0) {
+             if (e.type == SDL_QUIT) {
+                 quit = true; // User closed the window
+             }
+         }
+     }
+
+     SDL_DestroyRenderer(renderer);
+     SDL_DestroyWindow(window);
+     SDL_DestroyTexture(serverTexture);
+     SDL_FreeSurface(serverSurface);
+     SDL_DestroyTexture(clientTexture);
+     SDL_FreeSurface(clientSurface);
+     TTF_CloseFont(font);
+     TTF_Quit();
+     SDL_Quit();
+
+    
+ }
 
 
  void Client_error(const char *msg)
@@ -22,7 +113,7 @@
 
 void send_file(FILE *fp, int sockfd, char *filename)
 {
-    char data[SIZE]; // print korar jonno ekhane unsigned kora hoise
+    char data[SIZE]; 
     size_t bytesRead;
 
     // Get the file extension
@@ -88,7 +179,7 @@ void send_file(FILE *fp, int sockfd, char *filename)
               
               
         }
-         printEncrypt(encryptedTxt,sizeof(encryptedTxt));
+        //printEncrypt(encryptedTxt,sizeof(encryptedTxt));
          printf("\n \n");
         if (send(sockfd, encryptedTxt, extendedLen, 0) == -1)
         {
@@ -157,9 +248,12 @@ void ClientSoc(int argc,char *argv[])
         //return 1;
         
     }
+     std::thread boxThread(box);   // this is added new
 
     send_file(fp, sockfd, filename); // +1 to skip the dot in the extension
     printf("[+]File data sent successfully.\n");
+    
+    boxThread.join();  // this is added new
 
     close(sockfd);
 
